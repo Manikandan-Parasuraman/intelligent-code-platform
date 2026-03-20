@@ -1,0 +1,8 @@
+fastapi
+uvicorn
+langchain
+faiss-cpu
+pydantic
+python-dotenv
+gitpython
+ollama
