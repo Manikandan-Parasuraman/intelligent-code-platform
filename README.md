@@ -34,15 +34,15 @@ It acts like a **senior developer for your project**, capable of:
 
 ```mermaid
 graph TD
-    A[User / Developer] --> B[Frontend UI]
-    B --> C[FastAPI Backend]
-    C --> D[Retriever (FAISS)]
-    D --> E[Vector DB (Embeddings)]
-    C --> F[LLM (Code Llama via Ollama)]
-    F --> G[Code Generator]
-    G --> H[File Manager]
-    H --> I[Project Repository]
-    H --> J[Git Commit Service]
+    A[User] --> B[UI Layer]
+    B --> C[API Layer - FastAPI]
+    C --> D[Retriever Service]
+    D --> E[Vector Store]
+    C --> F[LLM Service]
+    F --> G[Code Engine]
+    G --> H[File System]
+    H --> I[Repository]
+    H --> J[Git Service]
 ```
 
 ---
