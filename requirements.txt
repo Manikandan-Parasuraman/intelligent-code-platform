@@ -1,8 +1,13 @@
 fastapi
 uvicorn
 langchain
+langchain-community
+langchain-ollama
+langchain-text-splitters
 faiss-cpu
 pydantic
+pydantic-settings
 python-dotenv
 gitpython
 ollama
+langchain-core
