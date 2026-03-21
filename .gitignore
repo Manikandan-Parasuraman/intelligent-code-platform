@@ -1,0 +1,10 @@
+repo/
+ollama_data/
+__pycache__/
+*.bak
+data/vector_store/
+frontend/.next/
+frontend/node_modules/
+venv/
+.env*
+!frontend/.env.local

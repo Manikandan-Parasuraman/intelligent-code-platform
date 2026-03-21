@@ -1,0 +1,4 @@
+{
+  "file_path": "repo/resume-backend/main.py",
+  "code": "from fastapi import FastAPI\n\napp = FastAPI()\n\n@app.get('/health')\ndef health_check():\n    return {'status': 'OK'}\n"
+}

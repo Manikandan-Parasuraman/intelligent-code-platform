@@ -1,0 +1,56 @@
+/* VS Code Dark Theme Inspired */
+
+html,
+body {
+    margin: 0;
+    padding: 0;
+    background-color: #1e1e1e;
+    color: #d4d4d4;
+    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #444;
+    border-radius: 4px;
+}
+
+/* Sidebar */
+.sidebar {
+    background-color: #252526;
+    color: #ccc;
+}
+
+/* Chat */
+.chat-user {
+    color: #4fc3f7;
+}
+
+.chat-ai {
+    color: #81c784;
+}
+
+/* Buttons */
+button {
+    background-color: #0e639c;
+    color: white;
+    border: none;
+    padding: 8px;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #1177bb;
+}
+
+/* Input */
+input {
+    background: #333;
+    color: white;
+    border: 1px solid #555;
+    padding: 8px;
+}

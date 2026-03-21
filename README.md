@@ -1,5 +1,11 @@
 # Intelligent Code Platform
 
+![Python](https://img.shields.io/badge/Python-3.10-blue)
+![FastAPI](https://img.shields.io/badge/FastAPI-Backend-green)
+![Docker](https://img.shields.io/badge/Docker-Ready-blue)
+![AI](https://img.shields.io/badge/AI-Code%20Assistant-purple)
+![License](https://img.shields.io/badge/License-MIT-yellow)
+
 > **Turn your codebase into an intelligent, self-evolving system**
 
 ---
@@ -20,11 +26,10 @@ It acts like a **senior developer for your project**, capable of:
 ## Key Features
 
 * 🔍 **Semantic Code Search** – Understand code context, not just text
-* 🧠 **AI Code Generation** – Generate production-ready code
+* 🧠 **AI Code Generation** – Generate production-ready code with JSON-driven accuracy
 * 🛠️ **Auto Code Writing** – Modify and create files automatically
-* 🔄 **Git Integration** – Auto commit changes
-* 🧩 **Modular Architecture** – Scalable and maintainable
-* 🐳 **Dockerized Setup** – Easy deployment
+* 🔄 **Git Integration** – Auto commit changes to the `./repo` directory
+* 🐳 **Dockerized Setup** – Full stack orchestration with model persistence
 * 🏠 **Self-hosted LLM Support** – Runs locally using Ollama
 * 🔐 **Secure API Access** – API key-based authentication
 
@@ -37,56 +42,12 @@ graph TD
     A[User] --> B[UI Layer]
     B --> C[API Layer - FastAPI]
     C --> D[Retriever Service]
-    D --> E[Vector Store]
-    C --> F[LLM Service]
+    D --> E[Vector Store - FAISS]
+    C --> F[LLM Service - CodeLlama]
     F --> G[Code Engine]
     G --> H[File System]
-    H --> I[Repository]
+    H --> I[Repository Folder]
     H --> J[Git Service]
-```
-
----
-
-## 📸 Demo Screenshots (Layout)
-
-### 🖥️ Chat Interface
-
-```
-+--------------------------------------+
-| 💻 AI Code Assistant                 |
-|--------------------------------------|
-| You: Add JWT authentication          |
-| AI: Generated code...                |
-|--------------------------------------|
-| [ Ask something... ] [Send]          |
-+--------------------------------------+
-```
-
----
-
-### 📂 Code Update Preview
-
-```
-File: repo/auth.py
-
---- OLD --------------------
-def login():
-    pass
-
---- NEW --------------------
-def login():
-    token = create_jwt(user)
-    return token
-```
-
----
-
-### 🔄 Git Auto Commit
-
-```
-✔ Changes committed successfully
-Message: "AI code update"
-Files changed: auth.py
 ```
 
 ---
@@ -98,13 +59,14 @@ Files changed: auth.py
 | Backend      | FastAPI                 |
 | AI Framework | LangChain               |
 | LLM          | Code Llama (via Ollama) |
+| Embeddings   | all-minilm (via Ollama) |
 | Vector DB    | FAISS                   |
 | DevOps       | Docker                  |
 | Versioning   | Git                     |
 
 ---
 
-## 📦 Installation
+## 📦 Installation & Setup
 
 ### 1️⃣ Clone Repository
 
@@ -113,59 +75,62 @@ git clone https://github.com/your-username/intelligent-code-platform.git
 cd intelligent-code-platform
 ```
 
----
-
-### 2️⃣ Install Dependencies
-
+### 2️⃣ Initialize Target Repository
+The platform interacts with code inside the `repo/` folder. Ensure it is a valid Git repository for auto-commits to work:
 ```bash
-pip install -r requirements.txt
+git init repo/
+```
+
+### 3️⃣ Run with Docker
+Start the backend, frontend, and Ollama services:
+```bash
+docker-compose up -d --build
+```
+
+### 4️⃣ Setup AI Models
+The platform requires two models. Download them into the Ollama container:
+```bash
+docker exec -it ollama ollama pull codellama
+docker exec -it ollama ollama pull all-minilm
+```
+*Note: These models are stored in `./ollama_data` and will persist across service restarts.*
+
+### 5️⃣ Index Your Codebase
+Once the models are pulled, generate the semantic index for your code:
+```bash
+docker exec ai-backend env PYTHONPATH=. python app/ingestion/ingest.py
 ```
 
 ---
 
-### 3️⃣ Setup LLM (Ollama)
+## 🚀 Native GPU Support (Optional)
+By default, the system runs on **CPU**. If you have an NVIDIA GPU, you can significantly speed up generation by adding the following to the `ollama` service in `docker-compose.yml`:
 
-```bash
-ollama pull codellama
+```yaml
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
 ```
-
----
-
-### 4️⃣ Index Your Codebase
-
-```bash
-python app/ingestion/ingest.py
-```
-
----
-
-### 5️⃣ Run with Docker
-
-```bash
-docker-compose up --build
-```
+*Requirement: Ensure the **NVIDIA Container Toolkit** is installed on your host OS.*
 
 ---
 
 ## 🔐 API Usage
 
-### Endpoint:
-
-```
-POST /generate
-```
-
-### Headers:
-
+### Endpoint: `POST /generate`
+**Headers:**
 ```
 x-api-key: secure-key
+Content-Type: application/json
 ```
-
-### Request:
-
+**Request Body:**
 ```json
 {
-  "question": "Add JWT authentication to my FastAPI app"
+  "question": "Add a health check endpoint to repo/main.py"
 }
 ```
 
@@ -174,92 +139,32 @@ x-api-key: secure-key
 ## 📁 Project Structure
 
 ```
-ai-code-assistant/
-├── app/
-│   ├── core/
-│   ├── ingestion/
-│   ├── retrieval/
-│   ├── llm/
-│   ├── services/
-│   ├── api/
-│   └── utils/
-├── repo/
-├── data/
-├── Dockerfile
-├── docker-compose.yml
-└── requirements.txt
+ai-code-platform/
+├── app/                # Backend Application (FastAPI)
+│   ├── api/            # API Routes & Endpoints
+│   ├── core/           # Config & Security
+│   ├── ingestion/      # RAG Ingestion (ingest.py)
+│   ├── llm/            # LLM Engine & JSON Mode
+│   ├── retrieval/      # FAISS Retriever Service
+│   ├── services/       # Code Generation Logic
+│   └── utils/          # File Management
+├── frontend/           # Frontend Application (Next.js)
+│   ├── app/            # Next.js Pages
+│   ├── components/     # React Components (Editor, Chat)
+│   └── public/         # Static Assets
+├── repo/               # Target workspace for AI to modify
+├── data/               # Vector Store (index.faiss, index.pkl)
+├── ollama_data/        # Persistent model storage for Ollama
+├── Dockerfile          # Backend container definition
+├── docker-compose.yml  # Full stack orchestration
+├── requirements.txt    # Python dependencies
+└── README.md           # Project documentation
 ```
 
 ---
 
-## Production Considerations
-
-Before deploying in real-world environments:
-
-* ✅ Add JWT-based authentication
-* ✅ Implement role-based access control (RBAC)
-* ✅ Add logging (ELK / Grafana)
-* ✅ Enable rate limiting
-* ✅ Validate AI-generated code before writing
-* ✅ Add approval workflow (human-in-loop)
-
----
-
-## Roadmap
-
-* [ ] Multi-agent system (Planner + Coder + Reviewer)
-* [ ] React dashboard UI
-* [ ] Code diff approval system
-* [ ] CI/CD integration
-* [ ] Cloud deployment (AWS / GCP)
-* [ ] Multi-user collaboration
-
----
-
-## GitHub Badges
-
-Add these to top of your README:
-
-```
-![Python](https://img.shields.io/badge/Python-3.10-blue)
-![FastAPI](https://img.shields.io/badge/FastAPI-Backend-green)
-![Docker](https://img.shields.io/badge/Docker-Ready-blue)
-![AI](https://img.shields.io/badge/AI-Code%20Assistant-purple)
-![License](https://img.shields.io/badge/License-MIT-yellow)
-```
-
----
-
-## Contributing
-
-Contributions are welcome!
-
-1. Fork the repo
-2. Create a feature branch
-3. Commit changes
-4. Open a Pull Request
-
----
-
-## License
-
-This project is licensed under the **MIT License**
-
----
-
-## Final Thought
+## 🏁 Final Thought
 
 > This is not just a tool — it’s a foundation for building **AI-powered development platforms**.
 
----
-## Support
-
-If you like this project:
-
-* Star the repo
-* Fork it
-* Build your own AI tools
-
----
-
-**Built with to redefine software development**
+**Built with pride to redefine software development**

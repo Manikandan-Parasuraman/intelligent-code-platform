@@ -13,9 +13,17 @@ def ingest():
                 with open(os.path.join(root, file), encoding="utf-8") as f:
                     docs.append(f.read())
 
+    print(f"Loading {len(docs)} documents...", flush=True)
     splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=200)
     chunks = splitter.create_documents(docs)
 
-    embeddings = OllamaEmbeddings(model=settings.MODEL_NAME)
-    db = FAISS.from_documents(chunks, embeddings)
-    db.save_local(settings.VECTOR_DB_PATH)
+    print(f"Generating embeddings for {len(chunks)} chunks using {settings.EMBEDDING_MODEL}...", flush=True)
+    embeddings = OllamaEmbeddings(model=settings.EMBEDDING_MODEL, base_url=settings.OLLAMA_BASE_URL)
+    vector_store = FAISS.from_documents(chunks, embeddings)
+    vector_store.save_local(settings.VECTOR_DB_PATH)
+    print(f"Ingestion complete. Saved to {settings.VECTOR_DB_PATH}", flush=True)
+    print("Ingestion complete.")
+
+
+if __name__ == "__main__":
+    ingest()
